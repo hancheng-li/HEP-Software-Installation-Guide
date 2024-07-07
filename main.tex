@@ -1,0 +1,400 @@
+\documentclass[12pt, english]{article}
+\usepackage[a4paper,margin=1in,footskip=0.4in]{geometry}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ 
+  language=bash,
+  basicstyle=\ttfamily,
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,	                 % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  morekeywords={conda, brew, nano, gcc, root, error},            % if you want to add more keywords to the set
+  numbers=none,                    % where to put the line-numbers; possible values are (none, left, right)
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  tabsize=4,	                     % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+\usepackage{url}
+\usepackage{minted}
+\usepackage{tabto}
+
+\title{A Comprehensive Guide on Installing the HEP Trifecta on macOS}
+\author{Hancheng Li}
+\date{Last Update: June 2024}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Welcome, brave soul, to the wild ride of installing the HEP Trifecta. If you've ever felt that taming a dragon might be easier than setting up your computing environment, you're in the right place. This document is your trusty map through the ``sophisticated" process of getting MadGraph, Pythia, and Delphes up and running on your machine. \\\\
+Think of this as the ultimate quest, where the end reward is not a golden chest, but something far more precious: a functioning HEP software suite. Along the way, you’ll likely encounter a bunch of confusing bugs and errors that make you second-guess your decision to pursue HEP in the future. But fear not! With a lot of patience and the proper guidance of this document, you’ll emerge victorious.\\\\
+Before we begin, I should warn you that, just like any other installation guide, this is only ``comprehensive" to the extent that it includes all the errors I encountered during the two times I installed the software on my personal computers. If you come across unexpected errors not mentioned in the guide, let me introduce you to your best friend throughout this journey—ChatGPT. Like any good friend, ChatGPT might not be reliable 100\% of the time, but you can be sure that, for the most part, it is genuinely trying to help. Just use some discernment about whether the advice it offers is correct and safe. Also, don't hesitate to copy and paste error messages from your terminal directly into Google Search. If you're lucky, a solution will appear that addresses your issue exactly. \\\\
+So, without further ado, let’s get started!
+
+\section{Preliminaries}
+Believe it or not, having the correct macOS version is crucial for installing this software. For your information, my installation process was completed on M-series machines with macOS Sonoma 14.5. Using an incompatible macOS version can lead to many confusing bugs. As far as I know, any version of macOS Sonoma should work fine. To avoid unexpected errors that might arise from an OS update, you should turn off automatic OS updates in your system settings. Once you have confirmed that you have the correct macOS version and have disabled automatic updates, you can proceed with the installation process.
+
+\section{Install Python}
+I highly recommend using Anaconda to manage Python versions since this makes it much easier to maintain a stable environment for the software. If you've already installed Anaconda and created an environment, please skip this part and go to section 3. \\\\
+First, make sure that you have Anaconda installed. If not, please click this link \url{https://www.anaconda.com/download/success}, scroll to the bottom, and click the \textbf{64-Bit (Apple silicon) Graphical Installer} one to download Anaconda. Alternatively, you can follow any instructions on YouTube for a better demonstration to install Anaconda or ask ChatGPT for guidance.\\\\
+Then create a new virtual environment by going to your terminal and typing:
+\begin{lstlisting}
+    $ conda create -n name_of_your_env python=3.11
+\end{lstlisting}
+Replace \texttt{name\_of\_your\_env} with the name of your new environment. \\\\
+Then type:
+\begin{lstlisting}
+    $ conda activate name_of_your_env
+\end{lstlisting}
+to activate your conda environment. (You will need to do this every time you open up a new terminal)\\\\
+Now, you have a virtual Python environment installed on your computer!
+% \section{Install \texttt{gcc}}
+% Then, you'll need to install \texttt{gcc} on your computer manually. To check if you already have \texttt{gcc} on your computer, type: 
+% \begin{lstlisting}
+%     $ gcc --version
+% \end{lstlisting}
+% If you see something like this:
+% \begin{lstlisting}
+%     Apple clang version 14.0.3 (clang-1403.0.22.14.1)
+%     Target: arm64-apple-darwin23.5.0
+%     Thread model: posix
+%     InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+% \end{lstlisting}
+% This means that you do \textbf{NOT} have the explicit \texttt{gcc} compiler on your machine. Please do the following steps. \\\\
+% First, install homebrew on your computer. Goto \url{https://brew.sh/} and follow the instructions there. \\\\
+% Once you have homebrew, open up a terminal and type:
+% \begin{lstlisting}
+%     $ brew install gcc
+% \end{lstlisting}
+% Once it finishes installing \texttt{gcc}, type the following command:
+% \begin{lstlisting}
+%     $ nano ~/.zshrc
+% \end{lstlisting}
+% You will see the contents of your .zshrc configuration file. Scroll to the bottom and add the following lines to the end:
+% \begin{lstlisting}
+%     # >>> gcc configuration >>>
+%     export PATH="/opt/homebrew/bin:$PATH"
+%     export PATH="/opt/homebrew/opt/gcc/bin:$PATH"
+%     alias gcc='/opt/homebrew/bin/gcc-14'
+%     alias gfortran='/opt/homebrew/bin/gfortran-14'
+%     # <<< gcc configuration <<<
+% \end{lstlisting}
+% Note that \texttt{gcc-14} and \texttt{gfortran-14} might not be the version that homebrew installed on your specific machine so it's always good to check the version of your \texttt{gcc} by typing this in your terminal:
+% \begin{lstlisting}
+%     $ brew list gcc
+% \end{lstlisting}
+% You will see a bunch of files. Check the file name. If you see something like this: 
+% \begin{lstlisting}
+%     /opt/homebrew/Cellar/gcc/14.1.0_1/bin/
+%     aarch64-apple-darwin23-gcc-14
+% \end{lstlisting}
+% This means that you have \texttt{gcc-14} installed. If you have any other version installed, simply change the suffix of \texttt{gcc-14} to the appropriate version. \\\\
+% After that, press \texttt{Ctrl-X} on your keyboard, type \texttt{y} to accept the changes, and then press \texttt{Enter} to save the changes. \\\\
+% Then type the following command to your terminal:
+% \begin{lstlisting}
+%     $ source ~/.zshrc
+%     $ conda activate name_of_your_env
+% \end{lstlisting}
+% This line is to tell your computer that it needs to rerun the .zshrc file so that it has the most up-to-date configurations. You can also close and reopen all the terminals to achieve the same goal. \\\\
+% Finally, to make sure that you are using the explicit \texttt{gcc} compiler, type the following to your terminal:
+% \begin{lstlisting}
+%     $ gcc --version
+% \end{lstlisting}
+% You should now see something like this:
+% \begin{lstlisting}
+%     gcc-14 (Homebrew GCC 14.1.0_1) 14.1.0
+%     Copyright (C) 2024 Free Software Foundation, Inc.
+%     This is free software; 
+%     see the source for copying conditions.  
+%     There is NO warranty; 
+%     not even for MERCHANTABILITY 
+%     or FITNESS FOR A PARTICULAR PURPOSE.
+% \end{lstlisting}
+% If you don't see something like this, remember that ChatGPT is always your best friend. \\\\
+% Now, you have the explicit \texttt{gcc} compiler on your computer!
+
+\section{Install ROOT}
+We'll also need to install \texttt{ROOT} in our current conda environment. Don't forget to do: 
+\begin{lstlisting}
+    $ conda activate name_of_your_env
+\end{lstlisting}
+whenever you open up a new terminal to ensure that you are in the correct environment. \\\\
+Now, type the following lines on your terminal:
+\begin{lstlisting}
+    $ conda activate name_of_your_env
+    $ conda config --set channel_priority strict
+    $ conda install -c conda-forge root
+\end{lstlisting}
+If you see something like this:
+\begin{lstlisting}
+    PackagesNotFoundError: The following packages 
+    are not available from current channels:
+    
+      - root
+      - forge
+    
+    Current channels:
+    
+      - https://conda.anaconda.org/conda
+      - defaults
+\end{lstlisting}
+This means that your conda is not up-to-date. You will need to type the following lines to your terminal:
+\begin{lstlisting}
+    $ conda activate base
+    $ conda update conda
+\end{lstlisting}
+Then type:
+\begin{lstlisting}
+    $ conda activate name_of_your_env
+\end{lstlisting}
+The above updates the conda package which only exists in your base environment. \\\\
+Then, retype these three lines to your terminal:
+\begin{lstlisting}
+    $ conda activate name_of_your_env
+    $ conda config -- set channel_priority strict
+    $ conda install -c conda - forge root
+\end{lstlisting}
+To check if you have \texttt{ROOT} installed, type this on your terminal:
+\begin{lstlisting}
+    $ root --version
+\end{lstlisting}
+If you see something like this:
+\begin{lstlisting}
+    ROOT Version: 6.30/04
+    Built for macosxarm64 on Feb 22 2024, 13:40:57
+    From heads/master@tags/v6-30-04
+\end{lstlisting}
+You've successfully installed \texttt{ROOT} in your environment. \\\\
+Lastly, you will need to add the environmental variables to your .zshrc file by doing the following:
+\begin{lstlisting}
+    $ nano ~/.zshrc
+\end{lstlisting}
+Scroll to the bottom and add the following lines at the end:
+\begin{lstlisting}
+# >>> ROOT Configuration >>>
+    export ROOTSYS=$CONDA_PREFIX
+    export PATH=$ROOTSYS/bin:$PATH
+    export LD_LIBRARY_PATH=$ROOTSYS/lib:$LD_LIBRARY_PATH
+    export DYLD_LIBRARY_PATH=$ROOTSYS/lib:$DYLD_LIBRARY_PATH
+# <<< ROOT Configuration <<<
+\end{lstlisting}
+Exit and save the changes, then type the following commands to your terminal:
+\begin{lstlisting}
+    $ source ~/.zshrc
+    $ conda activate name_of_your_env
+\end{lstlisting}
+Everything should be set up with ROOT on your computer now. 
+
+\section{Install MadGraph}
+Now, we are ready to install \texttt{MadGraph}. First download the latest release from \href{https://launchpad.net/mg5amcnlo}{Madgraph's official website}. For reference, I'm using the 3.5.4 version. After unzipping the file and putting it in a desired directory(I highly recommend sticking with this directory in the future to prevent file retrieval issues due to path changes), \texttt{cd} to that directory and type:
+\begin{lstlisting}
+    $ ./bin/mg5_aMC
+\end{lstlisting}
+You should see the following drawing:
+\begin{lstlisting}
+************************************************************
+*                                                          *
+*                     W E L C O M E to                     *
+*              M A D G R A P H 5 _ a M C @ N L O           *
+*                                                          *
+*                                                          *
+*                 *                       *                *
+*                   *        * *        *                  *
+*                     * * * * 5 * * * *                    *
+*                   *        * *        *                  *
+*                 *                       *                *
+*                                                          *
+*         VERSION 3.5.4                 2024-04-05         *
+*                                                          *
+*    The MadGraph5_aMC@NLO Development Team - Find us at   *
+*              http://madgraph.phys.ucl.ac.be/             *
+*                            and                           *
+*            http://amcatnlo.web.cern.ch/amcatnlo/         *
+*                                                          *
+*               Type 'help' for in-line help.              *
+*           Type 'tutorial' to learn how MG5 works         *
+*    Type 'tutorial aMCatNLO' to learn how aMC@NLO works   *
+*    Type 'tutorial MadLoop' to learn how MadLoop works    *
+*                                                          *
+************************************************************
+\end{lstlisting}
+You now have \texttt{MadGraph} installed on your computer!
+
+\section{Install Pythia}
+Without exiting the MadGraph command-line interface, type the following to your terminal: 
+\begin{lstlisting}
+    install pythia8
+\end{lstlisting}
+You should see a bunch of messages pop up on your screen. Be patient and press \texttt{y} and \texttt{Enter} whenever you are prompted to install some necessary packages along the way. At the end, you should see:
+\begin{lstlisting}
+ Finished PYTHIA8 installation
+\end{lstlisting}
+You now have \texttt{PYTHIA} installed on your computer!
+
+\section{Install Delphes}
+This section is a little complicated as it is against the common practice of installing \texttt{Delphes} using \texttt{MadGraph}. However, I've encountered multiple difficulties using the default method on MacOS. I scrambled my way through and finally got \texttt{Delphes} installed. This section is my way of getting \texttt{Delphes} to work with \texttt{MadGraph}. \\\\
+First, you can try to install \texttt{Delphes} using the default method by typing the following to the command-line interface of \texttt{MadGraph}(aka. after running \lstinline{./bin/mg5_aMC}):
+\begin{lstlisting}
+    install Delphes
+\end{lstlisting}
+If you encountered an error like this during your installation:
+\begin{lstlisting}
+>> Building libDelphesNoFastJet.so
+clang-16: error: no such file or directory: 'libDelphesNoFastJet.so'
+make: *** [libDelphesNoFastJet.so] Error 1
+Error detected during the compilation. Please check the compilation error and run make manually.
+\end{lstlisting}
+This means you will need to follow the steps below. \\\\
+There are two ways to install \texttt{Delphes} manual. \\\\
+First, if you have a GitHub account, and have already had your SSH keys linked to your GitHub account, you can type the following commands to your terminal:
+\begin{lstlisting}
+    $ git clone git@github.com:delphes/delphes.git
+\end{lstlisting}
+Or, you can go to this link \url{https://github.com/delphes/delphes/releases/tag/3.5.0}, scroll to the bottom, download the zip file, and finally unzip the file. \\\\
+Then type:
+\begin{lstlisting}
+    $ cd /path/to/delphes/
+    $ make
+\end{lstlisting}
+Replace \lstinline{/path/to/delphes/} with the actual path to the \texttt{Delphes} folder that you just downloaded. 
+You should see a bunch of outputs and warning messages pop up on the terminal. Don't get scared, it's the process. However, if you encounter a compilation error like this:
+\begin{lstlisting}
+>> Compiling external/fastjet/ClosestPair2D.cc
+In file included from external/fastjet/ClosestPair2D.cc:31:
+In file included from external/fastjet/internal/ClosestPair2D.hh:34:
+/opt/anaconda3/envs/muon_collider/bin/../include/c++/v1/vector:549:52: error: arithmetic on a pointer to an incomplete type 'fastjet::ClosestPair2D::Point'
+\end{lstlisting}
+You likely have the wrong version for the clang compiler. You can check by typing the following command to your terminal(make sure that you are in the correct environment):
+\begin{lstlisting}
+    $ clang --version
+\end{lstlisting}
+If you see something like this:
+\begin{lstlisting}
+clang version 16.0.6
+Target: arm64-apple-darwin23.5.0
+Thread model: posix
+InstalledDir: /Users/name/anaconda3/envs/name_of_your_env/bin
+\end{lstlisting}
+This means that you have clang 16.0.6 installed on your current environment, which is \textbf{NOT} the correct version of clang compiler. We need to go back to clang 14 to make everything work together. 
+First type the following command to your terminal: 
+\begin{lstlisting}
+    $ conda install -c conda-forge clang=14
+\end{lstlisting}
+You will see a bunch of messages warning you that conda will need to automatically downgrade some packages in your current environment. Don't worry, press \texttt{y} and \texttt{Enter} and continue with the process. \\\\
+After it's done, you can check your clang version of your current conda environment by typing the following to your terminal: 
+\begin{lstlisting}
+    $ clang --version
+\end{lstlisting}
+Make sure that you see something like this:
+\begin{lstlisting}
+clang version 14.0.6
+Target: arm64-apple-darwin23.5.0
+Thread model: posix
+InstalledDir: /Users/name/anaconda3/envs/name_of_your_env/bin
+\end{lstlisting}
+The crucial thing is that the first number after \texttt{clang version} should be 14 and not other numbers. \\\\
+Then, type the following command to your terminal:
+\begin{lstlisting}
+    $ make clean
+    $ make
+\end{lstlisting}
+Now everything should compiler without errors. If you encounter any problem along the way---I can't stress this enough---don't forget that ChatGPT is always your best friend! \\\\
+
+\section{Get Everything to Work Together}
+Now you are at the last step of the process. We've come a long way. Keep up, it's almost there. \\\\
+First, you need to rename your \texttt{Delphes} directory to be, well, \texttt{Delphes}. The default name of your \texttt{Delphes} folder may not be \texttt{Delphes}, but in order for \texttt{MadGraph} to work together successfully with \texttt{Delphes}, you need to make sure that your \texttt{Delphes} directory is named ``Delphes"(the characters within the quotes EXACTLY). You can do this by typing the following command to your terminal(make sure that you are in the parent/upper directory of your \texttt{Delphes} folder):
+\begin{lstlisting}
+    $ mv name_of_your_delphes_folder Delphes
+\end{lstlisting}
+Then, we will need to move the \texttt{Delphes} folder inside the \texttt{MadGraph} folder. You can achieve this by typing the following command to your terminal:
+\begin{lstlisting}
+    $ mv Delphes /path/to/MadGraph/
+\end{lstlisting}
+Replace \lstinline{/path/to/MadGraph/} with the actual path to the \texttt{MadGraph} folder. \\\\
+Then, we can generate an event to see if everything is indeed working together as we expected. \\\\
+First, go to your MadGraph folder by typing the following command to your terminal:
+\begin{lstlisting}
+    $ cd /path/to/MadGraph/
+    $ ./bin/mg5_aMC
+\end{lstlisting}
+You should see the interactive interface of MadGraph. \\\\
+Second, type the following commands line by line: 
+\begin{lstlisting}
+    generate e+ e- > mu+ mu-
+    output eemm
+    launch
+\end{lstlisting}
+You should see a bunch of messages and something like this at the end: 
+{\scriptsize
+\begin{lstlisting}
+/=============== Description ===============|====== values =======|= other options =\
+|1.Choose the shower/hadronization program  |    shower = OFF     |  Pythia8        |
+|2.Choose the detector simulation program   |    detector = OFF   |  Delphes        |
+|3.Choose an analysis package (plot/convert)|analysis = Not Avail.|Please install mo|
+|4.Decay onshell particles                  |    madspin = OFF    | ON|onshell|full |
+|5.Add weights to events for new hypp.      |    reweight = OFF   |     ON          |
+\===================================================================================/
+\end{lstlisting}
+}
+Now, type the following commands line by line:
+\begin{lstlisting}
+    shower=Pythia8
+    detector=Delphes
+\end{lstlisting}
+And then press \texttt{Enter} two times in a row. You should see a Safari/Chrome tab pop up in a few moments. 
+If you see an \textcolor{red}{\texttt{ERROR}} symbol on your screen next to \texttt{PYTHIA}'s row, click on the \textcolor{red}{\texttt{ERROR}}. If you see some output similar to this:
+\begin{lstlisting}
+File "/Users/bobli/Desktop/MG5_aMC_v3_5_4/madgraph/various/histograms.py", line 1681, in __init__
+    self.parse_histos_from_PY8_XML_stream(stream, run_id,
+  File "/Users/bobli/Desktop/MG5_aMC_v3_5_4/madgraph/various/histograms.py", line 1797, in parse_histos_from_PY8_XML_stream
+    raise MadGraph5Error("Histogram with run_id '%d' was not found in the "%run_id+\
+madgraph.MadGraph5Error: Histogram with run_id '0' was not found in the specified XML source.
+\end{lstlisting}
+You will need to do the following. First, open up a new terminal session and type the following commands to your terminal:
+\begin{lstlisting}
+    $ mkdir -p /opt/anaconda3/envs/name_of_your_env/etc/conda/activate.d
+    $ nano /opt/anaconda3/envs/name_of_your_env/etc/conda/activate.d/set_pythia8data.sh
+\end{lstlisting}
+Add the following line to the file:
+\begin{lstlisting}
+    export PYTHIA8DATA="/Users/name/path/to/MadGraph/HEPTools/pythia8/share/Pythia8/xmldoc"
+\end{lstlisting}
+Replace \texttt{/name} with your username, and replace \texttt{/path/to/MadGraph/} with the actual path to your \texttt{MadGraph} folder.
+Now, to double-check that you indeed have the correct environment variable, you can type the following commands into your terminal:
+\begin{lstlisting}
+    $ conda activate name_of_your_env
+    $ echo $PYTHIA8DATA
+\end{lstlisting}
+If you see the path that you just put in, i.e:
+\begin{lstlisting}
+    /Users/name/path/to/MadGraph/HEPTools/pythia8/share/Pythia8/xmldoc
+\end{lstlisting}
+You should be good to go. \\\\
+Now, for the one last time, we will generate an event to check if everything works together smoothly. Please repeat the part of generating an $e^+ e^-$ to $\mu^+\mu^-$ event. If, at the end, you see something like this on your screen: 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{Results_Screenshot.png}
+\end{figure}
+\\\\
+Congratulations, your journey with installing the HEP trifecta is finally over! 
+\end{document}
